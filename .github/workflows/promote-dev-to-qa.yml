@@ -48,7 +48,6 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}
           tags: |
-            type=sha
             type=raw,value=latest
       - name: Build and publish container
         uses: docker/build-push-action@v6
@@ -65,7 +64,19 @@ jobs:
     environment: dev
     steps:
       - name: Deploy to Dev
-        run: echo "[PLACEHOLDER — your team's actual Dev deployment command, e.g. an AWS/Azure CLI deploy step or an existing deploy script]"
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: ${{ secrets.EC2_SSH_PORT || 22 }}
+          script: |
+            set -e
+            cd /home/ubuntu
+            docker compose pull backend
+            docker compose up -d --force-recreate backend
+            docker compose ps backend
+            docker system prune -af
 
   deploy-qa:
     needs: deploy-dev

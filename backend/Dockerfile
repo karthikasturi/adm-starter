@@ -23,4 +23,4 @@ EXPOSE 8000
 
 # --reload is for local/dev convenience (paired with the app/ volume mount in
 # docker-compose.yml). Drop it for a production image in later sprints.
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
